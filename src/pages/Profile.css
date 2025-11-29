@@ -490,3 +490,28 @@ input:checked + .slider:before {
 .setting-item .setting-text + .toggle {
   margin-left: auto;
 }
+
+/* Mode Toggle */
+.mode-toggle {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border: 2px solid var(--color-primary);
+  cursor: pointer;
+}
+
+.mode-toggle:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+  transform: translateX(4px);
+}
+
+.mode-toggle .icon {
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

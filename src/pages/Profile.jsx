@@ -65,6 +65,19 @@ function Profile() {
     navigate('/login')
   }
 
+  const handleModeToggle = () => {
+    const newMode = authService.toggleMode()
+    showNotification(`Modo ${newMode === 'student' ? 'Estudiante' : 'Profesor'} activado`)
+    // Redirect based on mode
+    if (newMode === 'teacher') {
+      navigate('/dashboard')
+    } else {
+      navigate('/')
+    }
+    // Force reload to update navigation
+    window.location.reload()
+  }
+
   return (
     <div className="profile-page">
       {showToast && <div className="toast">{showToast}</div>}
@@ -182,6 +195,16 @@ function Profile() {
 
       <div className="settings-section">
         <h3>CUENTA</h3>
+        <div className="setting-item mode-toggle" onClick={handleModeToggle}>
+          <span className="icon">🔄</span>
+          <div className="setting-text">
+            <span>Cambiar Modo de Vista</span>
+            <small className="setting-description">
+              Actual: {authService.getMode() === 'student' ? 'Estudiante' : 'Profesor'}
+            </small>
+          </div>
+          <span className="arrow">›</span>
+        </div>
         <div className="setting-item">
           <span className="icon">🔒</span>
           <span>Cambiar contraseña</span>

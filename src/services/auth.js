@@ -35,6 +35,7 @@ const MOCK_USERS = [
 ]
 
 const AUTH_STORAGE_KEY = 'tecsup_auth_user'
+const MODE_STORAGE_KEY = 'tecsup_user_mode'
 
 export const authService = {
   // Login
@@ -42,6 +43,10 @@ export const authService = {
     const user = MOCK_USERS.find(u => u.correo === correo)
     if (user) {
       localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user))
+      // Default mode is student
+      if (!localStorage.getItem(MODE_STORAGE_KEY)) {
+        localStorage.setItem(MODE_STORAGE_KEY, 'student')
+      }
       return user
     }
     throw new Error('Usuario no encontrado')
@@ -50,6 +55,7 @@ export const authService = {
   // Logout
   logout() {
     localStorage.removeItem(AUTH_STORAGE_KEY)
+    localStorage.removeItem(MODE_STORAGE_KEY)
   },
 
   // Get current user
@@ -66,5 +72,23 @@ export const authService = {
   // Get all users (for selection)
   getAllUsers() {
     return MOCK_USERS
+  },
+
+  // Get current mode
+  getMode() {
+    return localStorage.getItem(MODE_STORAGE_KEY) || 'student'
+  },
+
+  // Set mode
+  setMode(mode) {
+    localStorage.setItem(MODE_STORAGE_KEY, mode)
+  },
+
+  // Toggle mode
+  toggleMode() {
+    const currentMode = this.getMode()
+    const newMode = currentMode === 'student' ? 'teacher' : 'student'
+    this.setMode(newMode)
+    return newMode
   }
 }

@@ -6,17 +6,27 @@ import Help from './pages/Help'
 import Results from './pages/Results'
 import Feed from './pages/Feed'
 import Tasks from './pages/Tasks'
+import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import Welcome from './components/Welcome'
 import { authService } from './services/auth'
 import './App.css'
 
-function Navigation() {
+function Navigation({ mode }) {
   const location = useLocation()
+  
+  if (mode === 'teacher') {
+    return (
+      <nav className="bottom-nav">
+        <Link to="/dashboard" className={`nav-item ${location.pathname === '/dashboard' ? 'active' : ''}`}>📊</Link>
+        <Link to="/profile" className={`nav-item ${location.pathname === '/profile' ? 'active' : ''}`}>👤</Link>
+      </nav>
+    )
+  }
   
   return (
     <nav className="bottom-nav">
-      <Link to="/" className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}>🏠</Link>
+      <Link to="/feed" className={`nav-item ${location.pathname === '/feed' || location.pathname === '/' ? 'active' : ''}`}>🏠</Link>
       <Link to="/tasks" className={`nav-item ${location.pathname === '/tasks' ? 'active' : ''}`}>📝</Link>
       <Link to="/chat" className={`nav-item ${location.pathname === '/chat' ? 'active' : ''}`}>💬</Link>
       <Link to="/results" className={`nav-item ${location.pathname === '/results' ? 'active' : ''}`}>👥</Link>
@@ -30,15 +40,22 @@ function ProtectedRoute({ children }) {
   return isAuthenticated ? children : <Navigate to="/login" replace />
 }
 
+function HomeRedirect() {
+  const mode = authService.getMode()
+  return <Navigate to={mode === 'teacher' ? '/dashboard' : '/feed'} replace />
+}
+
 function AppContent() {
   const location = useLocation()
   const [isAuthenticated, setIsAuthenticated] = useState(authService.isAuthenticated())
+  const [mode, setMode] = useState(authService.getMode())
   const [showWelcome, setShowWelcome] = useState(false)
 
   useEffect(() => {
-    // Check authentication on route change
+    // Check authentication and mode on route change
     const checkAuth = () => {
       setIsAuthenticated(authService.isAuthenticated())
+      setMode(authService.getMode())
     }
     checkAuth()
   }, [location])
@@ -57,14 +74,16 @@ function AppContent() {
       <div className="app">
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
+          <Route path="/" element={<ProtectedRoute><HomeRedirect /></ProtectedRoute>} />
+          <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
           <Route path="/tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
           <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
           <Route path="/results" element={<ProtectedRoute><Results /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         </Routes>
-        {isAuthenticated && <Navigation />}
+        {isAuthenticated && <Navigation mode={mode} />}
       </div>
     </>
   )
