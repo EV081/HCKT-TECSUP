@@ -132,15 +132,31 @@ function Chat() {
       )}
 
       <div className="messages">
-        {messages.map(msg => (
-          <div key={msg.id} className={`message ${msg.sender}`}>
-            <div className="avatar">{msg.sender === 'bot' ? '🤖' : '👤'}</div>
-            <div className="bubble">
-              {msg.text}
-              <span className="time">{msg.time}</span>
+        {messages.map(msg => {
+          // Dividir el mensaje por saltos de línea dobles primero, luego simples
+          const paragraphs = msg.text.split('\n\n').filter(p => p.trim())
+          
+          return (
+            <div key={msg.id} className={`message-group ${msg.sender}`}>
+              <div className="avatar">{msg.sender === 'bot' ? '🤖' : '👤'}</div>
+              <div className="bubbles-container">
+                {paragraphs.map((paragraph, idx) => (
+                  <div key={`${msg.id}-${idx}`} className="bubble">
+                    {paragraph.split('\n').map((line, lineIdx) => (
+                      <span key={lineIdx}>
+                        {line}
+                        {lineIdx < paragraph.split('\n').length - 1 && <br />}
+                      </span>
+                    ))}
+                    {idx === paragraphs.length - 1 && (
+                      <span className="time">{msg.time}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
         {isTyping && (
           <div className="typing">
             <div className="avatar">🤖</div>
