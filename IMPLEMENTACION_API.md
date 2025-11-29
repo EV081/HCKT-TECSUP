@@ -153,7 +153,8 @@ analisisAPI.analizarUsuario(correo, mensaje)
 
 ### 4. Perfil Mejorado
 - Datos académicos reales desde API
-- Toggle de autorización funcional
+- **Modo Anónimo** (mockeado) - oculta identidad en chats
+- **Autorización de Recopilación de Datos** (API real) - permite que agentes usen datos académicos
 - Información de carrera y rendimiento
 - Logout funcional
 

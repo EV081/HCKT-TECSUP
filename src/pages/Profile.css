@@ -471,3 +471,22 @@ input:checked + .slider:before {
   font-size: 13px;
   margin-top: 12px;
 }
+
+/* Setting with description */
+.setting-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.setting-description {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  font-weight: normal;
+}
+
+.setting-item .setting-text + .toggle {
+  margin-left: auto;
+}

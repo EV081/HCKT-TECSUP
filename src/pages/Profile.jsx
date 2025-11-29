@@ -6,7 +6,8 @@ import { analisisAPI, agentesAPI } from '../services/api'
 import './Profile.css'
 
 function Profile() {
-  const [anonymousMode, setAnonymousMode] = useState(true)
+  const [anonymousMode, setAnonymousMode] = useState(false) // Mock - solo UI
+  const [dataCollection, setDataCollection] = useState(true) // API real
   const [pushNotifications, setPushNotifications] = useState(true)
   const [showToast, setShowToast] = useState(false)
   const [activeTab, setActiveTab] = useState('settings')
@@ -25,7 +26,8 @@ function Profile() {
     try {
       const data = await analisisAPI.obtenerUsuario(currentUser.correo)
       setUserData(data)
-      setAnonymousMode(!data.usuario.autorizacion)
+      // La autorización de la API controla la recopilación de datos
+      setDataCollection(data.usuario.autorizacion)
     } catch (error) {
       console.error('Error loading user data:', error)
     } finally {
@@ -39,18 +41,20 @@ function Profile() {
   }
 
   const handleToggle = async (setter, value, name) => {
-    if (name === 'Modo Anónimo' && currentUser) {
+    if (name === 'Recopilación de Datos' && currentUser) {
+      // Este toggle usa la API real
       try {
         const newValue = !value
-        await agentesAPI.toggleAutorizacion(currentUser.correo, !newValue)
+        await agentesAPI.toggleAutorizacion(currentUser.correo, newValue)
         setter(newValue)
-        showNotification(`${name} ${newValue ? 'activado' : 'desactivado'}`)
+        showNotification(`${name} ${newValue ? 'activada' : 'desactivada'}`)
         await loadUserData()
       } catch (error) {
         console.error('Error toggling authorization:', error)
         showNotification('Error al cambiar configuración')
       }
     } else {
+      // Otros toggles son solo mock (UI)
       setter(!value)
       showNotification(`${name} ${!value ? 'activado' : 'desactivado'}`)
     }
@@ -200,6 +204,21 @@ function Profile() {
               type="checkbox" 
               checked={anonymousMode}
               onChange={() => handleToggle(setAnonymousMode, anonymousMode, 'Modo Anónimo')}
+            />
+            <span className="slider"></span>
+          </label>
+        </div>
+        <div className="setting-item">
+          <span className="icon">📊</span>
+          <div className="setting-text">
+            <span>Autorizar Recopilación de Datos</span>
+            <small className="setting-description">Permite que los agentes usen tus datos académicos para personalizar respuestas</small>
+          </div>
+          <label className="toggle">
+            <input 
+              type="checkbox" 
+              checked={dataCollection}
+              onChange={() => handleToggle(setDataCollection, dataCollection, 'Recopilación de Datos')}
             />
             <span className="slider"></span>
           </label>
